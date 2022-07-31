@@ -37,6 +37,12 @@ namespace Tree.Controllers
             var root = all.GenerateTree(c => c.Id, c => c.ParentId);
             return Ok(all.Where(x => x.ParentId == null));
         }
+        [HttpGet("GetNodeById/{id}")]
+        public async Task<IActionResult> GetNodeById(int id)
+        {
+            NodeEntity entity = await _context.Tree.FindAsync(id);
+            return Ok(entity);
+        }
 
         [HttpPut("UpdateNode")]
         public async Task<IActionResult> UpdateNode([FromBody] NodeModel model)
@@ -61,19 +67,6 @@ namespace Tree.Controllers
     }
     internal static class GenericHelpers
     {
-        /// <summary>
-        /// Generates tree of items from item list
-        /// </summary>
-        /// 
-        /// <typeparam name="T">Type of item in collection</typeparam>
-        /// <typeparam name="K">Type of parent_id</typeparam>
-        /// 
-        /// <param name="collection">Collection of items</param>
-        /// <param name="id_selector">Function extracting item's id</param>
-        /// <param name="parent_id_selector">Function extracting item's parent_id</param>
-        /// <param name="root_id">Root element id</param>
-        /// 
-        /// <returns>Tree of items</returns>
         public static IEnumerable<TreeItem<T>> GenerateTree<T, K>(
             this IEnumerable<T> collection,
             Func<T, K> id_selector,
